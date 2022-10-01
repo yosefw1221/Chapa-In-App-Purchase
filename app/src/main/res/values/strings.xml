@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Chapa-InAppPayment</string>
+    <string name="in_app_payment_using_chapa_sample">In App Payment Using Chapa Sample</string>
+    <string name="pay_with_chapa">Pay With Chapa</string>
+</resources>
