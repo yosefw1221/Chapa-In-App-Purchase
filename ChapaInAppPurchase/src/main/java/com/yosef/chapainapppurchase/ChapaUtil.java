@@ -59,4 +59,18 @@ public class ChapaUtil {
             checkOutCallBack.onFail(new ChapaError(ChapaError.INTERNAL_ERROR, e.getMessage()));
         }
     }
+
+    public static String generateTransactionRef(int length, String prefix) {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder result = new StringBuilder();
+        int random = length;
+        if (prefix != null) random -= prefix.length();
+        while (random > 0) {
+            double index = Math.random() * characters.length();
+            result.append(characters.charAt((int) index));
+            random--;
+        }
+        Log.d("Transaction Ref", prefix + result);
+        return prefix + result;
+    }
 }
