@@ -7,7 +7,9 @@ import androidx.annotation.NonNull;
 
 import com.yosef.chapainapppurchase.interfaces.ChapaPaymentCallback;
 import com.yosef.chapainapppurchase.model.Customer;
+import com.yosef.chapainapppurchase.utils.EncryptedKeyValue;
 import com.yosef.chapainapppurchase.utils.Validator;
+
 
 public class Chapa {
     private static ChapaConfiguration _chapaConfiguration;
@@ -65,6 +67,7 @@ public class Chapa {
         try {
             PaymentType _paymentType = (PaymentType) paymentType.clone();
             Log.d("Chapa", "processPayment: " + _paymentType);
+            if (paymentType.getCustomer() == null) loadSavedCustomer(context, paymentType);
             if (paymentType.getTx_ref() == null)
                 _paymentType.setTx_ref(ChapaUtil.generateTransactionRef(15, "TX-"));
             ChapaCheckoutPage chapaCheckoutPage = new ChapaCheckoutPage(context);
@@ -73,5 +76,17 @@ public class Chapa {
             callback.onError(new ChapaError(ChapaError.INTERNAL_ERROR, e.getMessage()));
         }
     }
+
+    private void loadSavedCustomer(Context context, PaymentType paymentType) {
+        EncryptedKeyValue pref = new EncryptedKeyValue(context, "CHAPA_IN_APP_PAYMENT");
+        String customerStr = pref.getValue("customer", null);
+        if (customerStr != null) {
+            String[] data = customerStr.split(",");
+            Customer customer = new Customer(data[0], data[1], data[2]);
+            paymentType.setCustomer(customer);
+            setCustomer(customer);
+        }
+    }
+
 
 }
