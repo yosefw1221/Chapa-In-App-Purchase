@@ -46,7 +46,8 @@ public class ChapaCheckoutPage {
     @SuppressLint("SetJavaScriptEnabled")
     public ChapaCheckoutPage(@NonNull Context context) {
         this.context = context;
-        _this = new BottomSheetDialog(context);
+        _this = new BottomSheetDialog(context, R.style.BottomSheetDialogTheme);
+        pref = new EncryptedKeyValue(context, EncryptedKeyValue.PREF_CHAPA);
         _this.setCanceledOnTouchOutside(false);
         loadingView = new ProgressBar(context);
         loadingView.setPadding(50, 60, 50, 60);
