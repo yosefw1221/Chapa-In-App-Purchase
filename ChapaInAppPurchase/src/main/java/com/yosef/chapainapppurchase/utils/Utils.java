@@ -2,8 +2,11 @@ package com.yosef.chapainapppurchase.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.net.ConnectivityManager;
 import android.os.Build;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
 
@@ -38,5 +41,13 @@ public class Utils {
             }
         }
         return result.toString();
+    }
+
+    public static boolean debugMode(@NotNull Context context) {
+        return 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
+    }
+
+    public static String getAppName(Context context) {
+        return context.getApplicationInfo().name;
     }
 }

@@ -21,14 +21,21 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.yosef.chapainapppurchase.interfaces.ChapaCheckoutUrlCallback;
 import com.yosef.chapainapppurchase.interfaces.ChapaGetCheckOutUrlCallBack;
+import com.yosef.chapainapppurchase.interfaces.ChapaVerifyTransactionCallback;
 import com.yosef.chapainapppurchase.interfaces._PaymentCallback;
 import com.yosef.chapainapppurchase.model.Customer;
+import com.yosef.chapainapppurchase.model.Transaction;
+import com.yosef.chapainapppurchase.payment_type.AppPayment;
+import com.yosef.chapainapppurchase.utils.EncryptedKeyValue;
 import com.yosef.chapainapppurchase.utils.Utils;
 import com.yosef.chapainapppurchase.utils.Validator;
+
+import java.util.Objects;
 
 public class ChapaCheckoutPage {
     private static boolean isInstanceRunning = false;
@@ -42,8 +49,9 @@ public class ChapaCheckoutPage {
     private _PaymentCallback callback;
     private PaymentPageStatus paymentPageStatus;
     private ChapaError _hasChapaError;
-
+    private EncryptedKeyValue pref;
     @SuppressLint("SetJavaScriptEnabled")
+
     public ChapaCheckoutPage(@NonNull Context context) {
         this.context = context;
         _this = new BottomSheetDialog(context, R.style.BottomSheetDialogTheme);
@@ -118,22 +126,32 @@ public class ChapaCheckoutPage {
 
     private void loadCheckoutPage() {
         handleView(PaymentPageStatus.LOADING_CHECKOUT_PAGE);
-        ChapaUtil.getCheckoutUrl(paymentType, new ChapaGetCheckOutUrlCallBack() {
+        String checkoutUrl = pref.getValue(paymentType.getTx_ref(), null);
+        if (checkoutUrl != null) {
+            webView.loadUrl(checkoutUrl);
+        } else ChapaUtil.getCheckoutUrl(paymentType, new ChapaGetCheckOutUrlCallBack() {
             @Override
             public void onSuccess(String checkoutUrl) {
+                pref.putValue(paymentType.getTx_ref(), checkoutUrl);
                 new Handler(Looper.getMainLooper()).post(() -> webView.loadUrl(checkoutUrl));
             }
 
             @Override
             public void onFail(ChapaError error) {
-                hasError(error);
+                if ((paymentType instanceof AppPayment) && Objects.requireNonNull(error.getMessage()).contains("Transaction reference has been used before") && paymentType.getTx_ref().contains(Objects.requireNonNull(Utils.getAndroidId(context)))) {
+                    verifyAppPayment(paymentType);
+                } else {
+                    hasError(error);
+                }
             }
         });
     }
 
     private void hasError(ChapaError error) {
         _hasChapaError = error;
-        new Handler(Looper.getMainLooper()).post(() -> handleView(PaymentPageStatus.PAYMENT_FAILED));
+        if (paymentType.isShowPaymentError())
+            new Handler(Looper.getMainLooper()).post(() -> handleView(PaymentPageStatus.PAYMENT_FAILED));
+        else _this.dismiss();
     }
 
     private void handleView(PaymentPageStatus status) {
@@ -149,14 +167,14 @@ public class ChapaCheckoutPage {
                 _this.setContentView(webView);
                 break;
             case PAYMENT_FAILED:
-                _this.setContentView(ErrorPage(_hasChapaError.getMessage()));
+                _this.setContentView(ErrorPage("Failed to Process Payment", _hasChapaError.getMessage()));
                 new Handler().postDelayed(_this::dismiss, 3000);
                 break;
 
         }
     }
 
-    private View ErrorPage(String detail) {
+    private View ErrorPage(String title, String detail) {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.setMargins(10, 10, 10, 10);
         LinearLayout parent = new LinearLayout(context);
@@ -170,7 +188,7 @@ public class ChapaCheckoutPage {
         errorTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
         errorTitle.setLayoutParams(params);
         errorTitle.setTextColor(Color.RED);
-        errorTitle.setText("Failed to Process Payment");
+        errorTitle.setText(title);
         TextView description = new TextView(context);
         description.setTextColor(Color.BLACK);
         description.setLayoutParams(params);
@@ -188,6 +206,30 @@ public class ChapaCheckoutPage {
     private void showPaymentDialog() {
         if (!isInstanceRunning) _this.show();
         isInstanceRunning = true;
+    }
+
+    private void verifyAppPayment(PaymentType appPayment) {
+        ChapaUtil.verifyTransaction(appPayment.getTx_ref(), new ChapaVerifyTransactionCallback() {
+            @Override
+            public void onResult(boolean verified, @Nullable Transaction transaction) {
+                if (verified) {
+                    pref.removeValue(paymentType.getTx_ref());
+                    paymentPageStatus = PaymentPageStatus.PAYMENT_SUCCESSFUL;
+                    _this.dismiss();
+                    appPayment.onPaymentSuccess();
+                    if (callback != null) callback.onSuccess(appPayment);
+                } else {
+                    paymentType.setTx_ref(ChapaUtil.generateTransactionRef(20, "TX-AppR-"));
+                    loadCheckoutPage();
+                }
+            }
+
+            @Override
+            public void onError(ChapaError error) {
+                appPayment.onPaymentFail(error);
+                hasError(error);
+            }
+        });
     }
 
     enum PaymentPageStatus {
@@ -218,6 +260,7 @@ public class ChapaCheckoutPage {
             if (url.contains("receipt")) {
                 handleView(PaymentPageStatus.PAYMENT_SUCCESSFUL);
                 paymentType.onPaymentSuccess();
+                pref.removeValue(paymentType.getTx_ref());
                 if (callback != null) callback.onSuccess(paymentType);
             } else if (paymentPageStatus != PaymentPageStatus.CHECKOUT_PAGE_LOADED)
                 handleView(PaymentPageStatus.CHECKOUT_PAGE_LOADED);

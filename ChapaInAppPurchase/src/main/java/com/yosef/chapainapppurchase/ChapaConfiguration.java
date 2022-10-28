@@ -90,7 +90,21 @@ public class ChapaConfiguration {
         _customer = new Customer(firstName, lastName, email);
     }
 
+    public void showPaymentError(boolean showPaymentError) {
+        this.showPaymentError = showPaymentError;
+    }
 
+    public boolean isShowPaymentError() {
+        return showPaymentError;
+    }
+
+    public String getAppUniqueName() {
+        return appUniqueName;
+    }
+
+    public void setAppUniqueName(String appUniqueName) {
+        this.appUniqueName = appUniqueName;
+    }
 
     @NonNull
     @Override
