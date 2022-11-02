@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -145,5 +146,16 @@ public class ChapaUtil {
         }
         Log.d("Transaction Ref", prefix + result);
         return prefix + result;
+    }
+
+    /**
+     * Checks if current user plan is in the given plan list
+     *
+     * @param plans app plan(s) to be checked in
+     * @return true if current user app plan is in the given app plan list or if you pass null it checks user is a premium user of any app plan
+     */
+    public static boolean isCurrentPlanIn(String... plans) {
+        String currentPlan = Chapa.getCurrentUserAppPlan();
+        return currentPlan != null && ((plans.length == 1 && plans[0] == null) || Arrays.asList(plans).contains(currentPlan));
     }
 }
