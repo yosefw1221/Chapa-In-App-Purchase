@@ -8,6 +8,7 @@ import android.os.Looper;
 
 import androidx.annotation.NonNull;
 
+import com.yosef.chapainapppurchase.ChapaConfiguration;
 import com.yosef.chapainapppurchase.ChapaError;
 import com.yosef.chapainapppurchase.ChapaUtil;
 import com.yosef.chapainapppurchase.PaymentType;
@@ -17,6 +18,12 @@ import com.yosef.chapainapppurchase.utils.Utils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * PaymentType to unlock premium features of app.
+ * it generate a unique tx-ref for each user with {@link ChapaConfiguration#getAppUniqueName()} and {@link #planName} and device id.
+ * so the payment will be unique for each device and only work one appPayment for one device.
+ * it support multiple plan. so you can have multiple plan for your app.
+ */
 public class AppPayment extends PaymentType {
     private final Context context;
     private final Class<? extends Activity> appMainActivity;
@@ -24,6 +31,8 @@ public class AppPayment extends PaymentType {
     private final String androidID;
 
     /**
+     * Creates PaymentType for app payment
+     *
      * @param amount          : amount user to be paid
      * @param appMainActivity : App's Main activity class that launches after a successful payment
      * @param planName        : app payment plan,  e.g. Basic, Premium...

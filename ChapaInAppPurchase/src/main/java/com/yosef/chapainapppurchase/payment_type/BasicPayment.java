@@ -3,7 +3,9 @@ package com.yosef.chapainapppurchase.payment_type;
 
 import com.yosef.chapainapppurchase.ChapaError;
 import com.yosef.chapainapppurchase.PaymentType;
-
+/**
+ * Basic payment type
+ */
 public class BasicPayment extends PaymentType {
 
     public BasicPayment(float amount) {

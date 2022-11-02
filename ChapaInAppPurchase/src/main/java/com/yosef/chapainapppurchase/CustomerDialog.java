@@ -18,6 +18,10 @@ import androidx.annotation.NonNull;
 import com.yosef.chapainapppurchase.model.Customer;
 import com.yosef.chapainapppurchase.utils.EncryptedKeyValue;
 
+/**
+ * A dialog that shows a form to the user to enter his/her information.
+ * when the customer information is not set in the ChapaConfiguration.
+ */
 @SuppressLint("ViewConstructor")
 public class CustomerDialog extends LinearLayout {
     final EditText firstNameI;

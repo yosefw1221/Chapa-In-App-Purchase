@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.yosef.chapainapppurchase.interfaces.ChapaPaymentCallback;
 import com.yosef.chapainapppurchase.model.Customer;
+import com.yosef.chapainapppurchase.payment_type.AppPayment;
 import com.yosef.chapainapppurchase.utils.EncryptedKeyValue;
 import com.yosef.chapainapppurchase.utils.Utils;
 import com.yosef.chapainapppurchase.utils.Validator;
@@ -29,29 +30,60 @@ public class Chapa {
         _chapaConfiguration = chapaConfiguration;
     }
 
+    /**
+     * Gets the Chapa instance
+     *
+     * @return Chapa instance
+     * @throws ChapaError {@link ChapaError#CHAPA_NOT_INITIALIZED} if Chapa is not initialized with {@link Chapa#init(Context, ChapaConfiguration)}
+     */
     public static Chapa getInstance() throws ChapaError {
         if (_chapaInstance == null) _chapaInstance = new Chapa(_chapaConfiguration);
         return _chapaInstance;
     }
 
+    /**
+     * Checks if Chapa is initialized
+     *
+     * @return true if Chapa is initialized, false otherwise
+     */
     public synchronized static boolean isInitialized() {
         return _chapaInstance != null;
     }
 
+    /**
+     * Gets initialized ChapaConfiguration
+     *
+     * @return ChapaConfiguration
+     */
     public static ChapaConfiguration getConfiguration() {
         return _chapaConfiguration;
     }
 
+    /**
+     * Initializes Chapa
+     *
+     * @param context            Application context
+     * @param chapaConfiguration ChapaConfiguration to initialize Chapa with
+     * @return Chapa instance
+     * @throws ChapaError if chapaConfiguration is not valid
+     * @see Validator#validateChapaConfiguration(Context, ChapaConfiguration)
+     */
     public synchronized static Chapa init(@NonNull Context context, @NonNull ChapaConfiguration chapaConfiguration) throws ChapaError {
-        ChapaError error = Validator.validateChapaConfiguration(context,chapaConfiguration);
+        ChapaError error = Validator.validateChapaConfiguration(context, chapaConfiguration);
         Logger.initialize(Utils.debugMode(context));
-        Logger.d("Initialize Chapa",chapaConfiguration.toString());
+        Logger.d("Initialize Chapa", chapaConfiguration.toString());
         if (error != null) throw error;
         loadAppPaymentData(context);
         _chapaInstance = new Chapa(chapaConfiguration);
         return _chapaInstance;
     }
 
+    /**
+     * Gets the current user app plan
+     *
+     * @return current user app plan
+     * @see AppPayment
+     */
     public static String getCurrentUserAppPlan() {
         return currentUserAppPlan;
     }
@@ -86,7 +118,7 @@ public class Chapa {
                 }else
                     throw new ChapaError(ChapaError.PHONE_ID_MISMATCH,"PhoneId not match");
             } catch (Exception e) {
-                Log.e("CHAPA ","LOAD APP PAYMENT ",e);
+                Log.e("CHAPA ", "LOAD APP PAYMENT ", e);
             }
         }
     }
@@ -102,10 +134,25 @@ public class Chapa {
         ChapaConfiguration._customer = customer;
     }
 
+    /**
+     * Processes chapa payment from PaymentType Object
+     *
+     * @param context              Application context
+     * @param paymentType          Object extends {@link PaymentType}
+     * @param chapaPaymentCallback ChapaPaymentCallback to get the payment result
+     * @see ChapaPaymentCallback
+     */
     synchronized public <T extends PaymentType> void pay(@NonNull Context context, @NonNull T paymentType, @NonNull ChapaPaymentCallback<T> chapaPaymentCallback) {
         processPayment(context, paymentType, chapaPaymentCallback);
     }
 
+    /**
+     * Processes chapa payment from PaymentType Object
+     *
+     * @param context     Application context
+     * @param paymentType Object extends {@link PaymentType}
+     * @see ChapaPaymentCallback
+     */
     synchronized public <T extends PaymentType> void pay(@NonNull Context context, @NonNull T paymentType) {
         processPayment(context, paymentType, null);
     }

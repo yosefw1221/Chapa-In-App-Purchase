@@ -24,6 +24,12 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ChapaUtil {
+    /**
+     * Get chapa checkout url from {@link PaymentType}
+     *
+     * @param paymentType      Object that extends {@link PaymentType}
+     * @param checkOutCallBack {@link ChapaGetCheckOutUrlCallBack} callback interface
+     */
     public static synchronized void getCheckoutUrl(@NonNull PaymentType paymentType, @NonNull ChapaGetCheckOutUrlCallBack checkOutCallBack) {
         try {
             ChapaError paymentDataError = Validator.validateRequestData(null, paymentType, false);
@@ -62,6 +68,12 @@ public class ChapaUtil {
         }
     }
 
+    /**
+     * Verify transaction Chapa Tx-Ref
+     *
+     * @param tx_ref                    Chapa Tx-Ref
+     * @param verifyTransactionCallback {@link ChapaVerifyTransactionCallback} callback interface
+     */
     public static synchronized void verifyTransaction(@NonNull String tx_ref, @NonNull ChapaVerifyTransactionCallback verifyTransactionCallback) {
         try {
             ChapaConfiguration configuration = Chapa.getConfiguration();
@@ -73,6 +85,13 @@ public class ChapaUtil {
         }
     }
 
+    /**
+     * Verify transaction Chapa Tx-Ref
+     *
+     * @param tx_ref                    Chapa Tx-Ref
+     * @param chapaKey                  Chapa secret Key
+     * @param verifyTransactionCallback {@link ChapaVerifyTransactionCallback} callback interface
+     */
     public static synchronized void verifyTransaction(@NonNull String tx_ref, @NonNull String chapaKey, @NonNull ChapaVerifyTransactionCallback verifyTransactionCallback) {
         _verifyTransaction(tx_ref, chapaKey, verifyTransactionCallback);
     }
@@ -107,7 +126,13 @@ public class ChapaUtil {
         }
     }
 
-
+    /**
+     * Generates a random alphaNumeric string
+     *
+     * @param length length of the string to be generated
+     * @param prefix prefix to be added to the generated string
+     * @return random alphaNumeric string with prefix and length specified
+     */
     public static String generateTransactionRef(int length, String prefix) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder result = new StringBuilder();

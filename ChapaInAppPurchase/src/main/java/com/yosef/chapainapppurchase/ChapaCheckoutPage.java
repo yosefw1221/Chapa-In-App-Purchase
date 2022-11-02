@@ -37,6 +37,9 @@ import com.yosef.chapainapppurchase.utils.Validator;
 
 import java.util.Objects;
 
+/**
+ * Payment modal responsible to handle Chapa checkout page
+ */
 public class ChapaCheckoutPage {
     private static boolean isInstanceRunning = false;
     final ProgressBar webProgressView;
@@ -50,6 +53,7 @@ public class ChapaCheckoutPage {
     private PaymentPageStatus paymentPageStatus;
     private ChapaError _hasChapaError;
     private EncryptedKeyValue pref;
+
     @SuppressLint("SetJavaScriptEnabled")
 
     public ChapaCheckoutPage(@NonNull Context context) {
@@ -82,6 +86,12 @@ public class ChapaCheckoutPage {
         });
     }
 
+    /**
+     * Process the payment from checkout url
+     *
+     * @param chapaCheckoutUrl Chapa checkout url
+     * @param callback         Payment callback
+     */
     public synchronized void processPayment(@NonNull String chapaCheckoutUrl, @NonNull ChapaCheckoutUrlCallback callback) {
         if (!_this.isShowing()) {
             showPaymentDialog();

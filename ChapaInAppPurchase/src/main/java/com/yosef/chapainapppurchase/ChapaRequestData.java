@@ -5,7 +5,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import org.json.JSONObject;
-
+/**
+ * Chapa Request Data
+ */
 public class ChapaRequestData extends ChapaConfiguration {
     private String tx_ref;
     private float amount;

@@ -10,7 +10,9 @@ import com.yosef.chapainapppurchase.ChapaRequestData;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+/**
+ * Validate chapa configuration and request data
+ */
 public class Validator {
 
     public static ChapaError validateChapaConfiguration(Context context, ChapaConfiguration config) {

@@ -12,6 +12,9 @@ import org.json.JSONObject;
 import java.util.Iterator;
 import java.util.Objects;
 
+/**
+ * Responsible for a key-value store that is encrypted using AES-256.
+ */
 public class EncryptedKeyValue {
     public static final String PREF_CHAPA_PAYED_ITEM = "chapa_payed_item";
     public static final String PREF_CHAPA = "chapa_pref";
@@ -139,6 +142,11 @@ public class EncryptedKeyValue {
         backupManager.dataChanged();
     }
 
+    /**
+     * Gets Encrypted KeyValue stored
+     *
+     * @return JSONObject of encrypted key value pairs
+     */
     public JSONObject getAllEncryptedData() {
         try {
             JSONObject pref = new JSONObject();
@@ -151,12 +159,23 @@ public class EncryptedKeyValue {
         }
     }
 
+    /**
+     * Gets Encrypted KeyValue stored
+     *
+     * @return JSON String of encrypted key value pairs
+     */
     public String getAllEncryptedDataAsJSONString() {
         JSONObject encryptedData = getAllEncryptedData();
         if (encryptedData == null) return null;
         return encryptedData.toString();
     }
 
+    /**
+     * Restores EncryptedKeyValue from Encrypted JSON String
+     *
+     * @param encryptedJSON Encrypted KeyValue JSONObject
+     * @throws JSONException if the JSON String is invalid
+     */
     public synchronized void restoreEncryptedPreference(JSONObject encryptedJSON) throws JSONException {
         Iterator<String> keys = encryptedJSON.keys();
         while (keys.hasNext()) {
@@ -166,6 +185,12 @@ public class EncryptedKeyValue {
         editor.commit();
     }
 
+    /**
+     * Restores EncryptedKeyValue from Encrypted JSON String
+     *
+     * @param encryptedJSONString Encrypted KeyValue JSON String
+     * @throws JSONException if the JSON String is invalid
+     */
     public synchronized void restoreEncryptedPreference(String encryptedJSONString) throws JSONException {
         JSONObject encryptedJSON = new JSONObject(encryptedJSONString);
         restoreEncryptedPreference(encryptedJSON);
