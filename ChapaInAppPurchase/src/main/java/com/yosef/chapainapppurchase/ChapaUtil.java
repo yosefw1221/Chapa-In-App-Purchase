@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import com.yosef.chapainapppurchase.interfaces.ChapaGetCheckOutUrlCallBack;
 import com.yosef.chapainapppurchase.interfaces.ChapaVerifyTransactionCallback;
 import com.yosef.chapainapppurchase.model.Transaction;
+import com.yosef.chapainapppurchase.utils.Utils;
 import com.yosef.chapainapppurchase.utils.Validator;
 
 import org.json.JSONException;
@@ -136,16 +137,17 @@ public class ChapaUtil {
      */
     public static String generateTransactionRef(int length, String prefix) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        String timeRand = Utils.charAt(String.valueOf(System.currentTimeMillis()), 2, 3, 6, 8, 9, 11);
         StringBuilder result = new StringBuilder();
-        int random = length;
+        int random = length - 6;
         if (prefix != null) random -= prefix.length();
         while (random > 0) {
             double index = Math.random() * characters.length();
             result.append(characters.charAt((int) index));
             random--;
         }
-        Log.d("Transaction Ref", prefix + result);
-        return prefix + result;
+        Log.d("Transaction Ref", prefix + result.append(timeRand));
+        return prefix + result.append(timeRand);
     }
 
     /**
