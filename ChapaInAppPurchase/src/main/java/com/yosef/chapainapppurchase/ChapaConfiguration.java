@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import com.yosef.chapainapppurchase.enums.Currency;
 import com.yosef.chapainapppurchase.model.Customer;
 import com.yosef.chapainapppurchase.model.Customization;
-import com.yosef.chapainapppurchase.payment_type.AppPayment;
 
 
 public class ChapaConfiguration {
@@ -14,7 +13,7 @@ public class ChapaConfiguration {
     private Currency currency = Currency.ETB;
     private String callback_url;
     private Customization customization;
-    private boolean showPaymentError;
+    private boolean showPaymentError = true;
     private String appUniqueName;
 
     public String getKey() {
@@ -126,20 +125,6 @@ public class ChapaConfiguration {
 
     public boolean isShowPaymentError() {
         return showPaymentError;
-    }
-
-    public String getAppUniqueName() {
-        return appUniqueName;
-    }
-
-    /**
-     * A unique app name (key) that you can use to identify your app.
-     * it mainly used for {@link AppPayment}
-     *
-     * @param appUniqueName app unique name/key
-     */
-    public void setAppUniqueName(String appUniqueName) {
-        this.appUniqueName = appUniqueName;
     }
 
     @NonNull
