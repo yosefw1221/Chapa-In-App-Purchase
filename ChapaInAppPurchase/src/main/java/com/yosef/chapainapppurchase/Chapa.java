@@ -1,6 +1,7 @@
 package com.yosef.chapainapppurchase;
 
-import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -71,7 +72,7 @@ public class Chapa {
     public synchronized static Chapa init(@NonNull Context context, @NonNull ChapaConfiguration chapaConfiguration) throws ChapaError {
         ChapaError error = Validator.validateChapaConfiguration(context, chapaConfiguration);
         Logger.initialize(Utils.debugMode(context));
-        Logger.d("Initialize Chapa", chapaConfiguration.toString());
+        Logger.d("Initialize Chapa, ", chapaConfiguration.toString() + "  " + Utils._getAppName(context));
         if (error != null) throw error;
         loadAppPaymentData(context);
         _chapaInstance = new Chapa(chapaConfiguration);
@@ -95,32 +96,48 @@ public class Chapa {
     private static void loadAppPaymentData(Context context) {
         EncryptedKeyValue pref = new EncryptedKeyValue(context, EncryptedKeyValue.PREF_CHAPA_PAYED_ITEM);
         String appPaymentData = pref.getValue("appPayment", null);
-        Log.d("Chapa", "loadAppPaymentData: " + appPaymentData);
+        Logger.d("Chapa", "loadAppPaymentData: " + appPaymentData);
         if (appPaymentData != null) {
             try {
                 JSONObject appPayment = new JSONObject(appPaymentData);
-                String className = appPayment.getString("launcher");
+                String className = appPayment.has("launcher") ? appPayment.getString("launcher") : null;
                 String plan = appPayment.getString("plan");
                 String phoneId = appPayment.getString("phoneId");
                 String phoneIdFallback = appPayment.getString("phoneIdFallback");
-                if(phoneId.equals(Utils.getAndroidId(context)) || phoneIdFallback.equals(Utils.getPseudoDeviceId())){
+                String appName = appPayment.getString("appName");
+                if (appName.equals(Utils._getAppName(context)) && (phoneId.equals(Utils.getAndroidId(context)) || phoneIdFallback.equals(Utils.getPseudoDeviceId()))) {
                     setCurrentUserAppPlan(plan);
-                    Class<?> launcher = Class.forName(className);
-                    Intent intent = new Intent(context, launcher);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.putExtra("plan", plan);
-                    setCurrentUserAppPlan(plan);
-                    Activity callerActivity = (Activity) context;
-                    String callerClassName = callerActivity.getClass().getName();
-                    if (launcher.getName().equals(callerClassName))
-                        throw new ChapaError(ChapaError.INITIALIZE_ON_APP_MAIN_ACTIVITY, "Could not initialize on App Main Activity");
-                    context.startActivity(intent);
-                }else
-                    throw new ChapaError(ChapaError.PHONE_ID_MISMATCH,"PhoneId not match");
+                    // launch app's main activity
+                    if (className != null) {
+                        Class<?> launcher = Class.forName(className);
+                        Intent intent = new Intent(context, launcher);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra("plan", plan);
+                        if (launcher.getName().equals(getTopActivityName(context)))
+                            throw new ChapaError(ChapaError.INITIALIZE_ON_APP_MAIN_ACTIVITY, "Could not initialize on App Main Activity");
+                        context.startActivity(intent);
+                    }
+                } else throw new ChapaError(ChapaError.PHONE_ID_MISMATCH, "PhoneId not match");
             } catch (Exception e) {
-                Log.e("CHAPA ", "LOAD APP PAYMENT ", e);
+                Logger.e("CHAPA ", "LOAD APP PAYMENT ", e);
             }
         }
+    }
+
+    private static String getTopActivityName(Context context) {
+        try {
+            ComponentName cn;
+            ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+                cn = am.getAppTasks().get(0).getTaskInfo().topActivity;
+            else cn = am.getRunningTasks(1).get(0).topActivity;
+            Logger.e("TopActivity", cn.getClassName());
+            return cn.getClassName();
+        } catch (Exception e) {
+            Logger.e("getTopActivityName", e.getMessage());
+            return null;
+        }
+
     }
 
     public void setCustomer(@NotNull Customer customer) {
