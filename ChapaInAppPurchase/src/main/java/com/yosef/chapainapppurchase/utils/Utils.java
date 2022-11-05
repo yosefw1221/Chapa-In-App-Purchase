@@ -46,7 +46,7 @@ public class Utils {
         return charAt(Build.BOARD, 1, 3, 5) + charAt(Build.BRAND, 3, 7, 5) + charAt(Build.CPU_ABI, 1, 3, 2, 9) + charAt(Build.MODEL, 1, 6, 2, 7);
     }
 
-    private static String charAt(String val, int... index) {
+    public static String charAt(String val, int... index) {
         StringBuilder result = new StringBuilder();
         Pattern validChar = Pattern.compile("[a-zA-Z0-9_-]");
         if (val != null) {
@@ -75,7 +75,9 @@ public class Utils {
      * @param context Context of the application
      * @return Application name
      */
-    public static String getAppName(Context context) {
-        return context.getApplicationInfo().name;
+    public static String _getAppName(Context context) {
+//        String appName = context.getApplicationInfo().loadLabel(context.getPackageManager()).toString();
+        String packageName = context.getPackageName();
+        return packageName.substring(packageName.lastIndexOf(".") + 1);
     }
 }
