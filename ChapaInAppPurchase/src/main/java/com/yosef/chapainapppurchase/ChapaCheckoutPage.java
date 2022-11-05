@@ -1,6 +1,7 @@
 package com.yosef.chapainapppurchase;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.LightingColorFilter;
@@ -52,7 +53,7 @@ public class ChapaCheckoutPage {
     private _PaymentCallback callback;
     private PaymentPageStatus paymentPageStatus;
     private ChapaError _hasChapaError;
-    private EncryptedKeyValue pref;
+    private final EncryptedKeyValue pref;
 
     @SuppressLint("SetJavaScriptEnabled")
 
@@ -227,7 +228,8 @@ public class ChapaCheckoutPage {
                     paymentPageStatus = PaymentPageStatus.PAYMENT_SUCCESSFUL;
                     _this.dismiss();
                     appPayment.onPaymentSuccess();
-                    if (callback != null) callback.onSuccess(appPayment);
+                    if (callback != null)
+                        ((Activity) context).runOnUiThread(() -> callback.onSuccess(paymentType));
                 } else {
                     paymentType.setTx_ref(ChapaUtil.generateTransactionRef(20, "TX-AppR-"));
                     loadCheckoutPage();
@@ -271,7 +273,9 @@ public class ChapaCheckoutPage {
                 handleView(PaymentPageStatus.PAYMENT_SUCCESSFUL);
                 paymentType.onPaymentSuccess();
                 pref.removeValue(paymentType.getTx_ref());
-                if (callback != null) callback.onSuccess(paymentType);
+                if (callback != null)
+                    ((Activity) context).runOnUiThread(() -> callback.onSuccess(paymentType));
+
             } else if (paymentPageStatus != PaymentPageStatus.CHECKOUT_PAGE_LOADED)
                 handleView(PaymentPageStatus.CHECKOUT_PAGE_LOADED);
             _this.setCancelable(true);
