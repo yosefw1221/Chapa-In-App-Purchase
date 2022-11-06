@@ -34,7 +34,7 @@ public class EncryptedKeyValue {
         n = Utils.getPseudoDeviceId();
     }
 
-    public static String c(String d) {
+    private String c(String d) {
         final StringBuilder sb = new StringBuilder();
         byte[] b = d.getBytes();
         byte len = (byte) (k.length());

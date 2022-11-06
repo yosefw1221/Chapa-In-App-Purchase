@@ -89,7 +89,7 @@ public class Chapa {
         return currentUserAppPlan;
     }
 
-    private static void setCurrentUserAppPlan(String currentUserAppPlan) {
+    static void setCurrentUserAppPlan(String currentUserAppPlan) {
         Chapa.currentUserAppPlan = currentUserAppPlan;
     }
 

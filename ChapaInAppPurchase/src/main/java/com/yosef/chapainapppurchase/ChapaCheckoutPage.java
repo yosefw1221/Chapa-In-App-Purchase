@@ -49,11 +49,11 @@ public class ChapaCheckoutPage {
     private final BottomSheetDialog _this;
     private final Context context;
     private final String TAG = "ChapaPaymentDialog --> ";
+    private final EncryptedKeyValue pref;
     private PaymentType paymentType;
     private _PaymentCallback callback;
     private PaymentPageStatus paymentPageStatus;
     private ChapaError _hasChapaError;
-    private final EncryptedKeyValue pref;
 
     @SuppressLint("SetJavaScriptEnabled")
 
@@ -167,22 +167,23 @@ public class ChapaCheckoutPage {
 
     private void handleView(PaymentPageStatus status) {
         paymentPageStatus = status;
-        switch (status) {
-            case LOADING_CHECKOUT_PAGE:
-                _this.setContentView(loadingView);
-                break;
-            case PAYMENT_SUCCESSFUL:
-                new Handler().postDelayed(_this::dismiss, 2000);
-                break;
-            case CHECKOUT_PAGE_LOADED:
-                _this.setContentView(webView);
-                break;
-            case PAYMENT_FAILED:
-                _this.setContentView(ErrorPage("Failed to Process Payment", _hasChapaError.getMessage()));
-                new Handler().postDelayed(_this::dismiss, 3000);
-                break;
-
-        }
+        ((Activity) context).runOnUiThread(() -> {
+            switch (status) {
+                case LOADING_CHECKOUT_PAGE:
+                    _this.setContentView(loadingView);
+                    break;
+                case PAYMENT_SUCCESSFUL:
+                    new Handler().postDelayed(_this::dismiss, 2000);
+                    break;
+                case CHECKOUT_PAGE_LOADED:
+                    _this.setContentView(webView);
+                    break;
+                case PAYMENT_FAILED:
+                    _this.setContentView(ErrorPage("Failed to Process Payment", _hasChapaError.getMessage()));
+                    new Handler().postDelayed(_this::dismiss, 3000);
+                    break;
+            }
+        });
     }
 
     private View ErrorPage(String title, String detail) {
@@ -273,6 +274,8 @@ public class ChapaCheckoutPage {
                 handleView(PaymentPageStatus.PAYMENT_SUCCESSFUL);
                 paymentType.onPaymentSuccess();
                 pref.removeValue(paymentType.getTx_ref());
+                if (paymentType instanceof AppPayment)
+                    Chapa.setCurrentUserAppPlan(((AppPayment) paymentType).getPlanName());
                 if (callback != null)
                     ((Activity) context).runOnUiThread(() -> callback.onSuccess(paymentType));
 
