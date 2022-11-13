@@ -2,7 +2,7 @@ package com.yosef.chapainapppurchase;
 
 public class ChapaError extends Exception {
     public static int INTERNAL_ERROR = 500;
-    public static int CHAPA_ERROR = 500;
+    public static int CHAPA_ERROR = 400;
     public static int UNSUPPORTED_DATA_TYPE = 422;
     public static int CHAPA_NOT_INITIALIZED = 433;
     public static int INVALID_CHAPA_CHECKOUT_URL = 422;
