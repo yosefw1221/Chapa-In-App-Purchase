@@ -7,13 +7,16 @@ import androidx.annotation.NonNull;
 import com.yosef.chapainapppurchase.enums.ItemProperties;
 import com.yosef.chapainapppurchase.utils.EncryptedKeyValue;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Gets and Manipulate Payed Items
  */
-public class PayedItems {
+public class PurchasedItems {
     public final EncryptedKeyValue encryptedKeyValue;
 
-    public PayedItems(@NonNull Context context) {
+    public PurchasedItems(@NonNull Context context) {
         encryptedKeyValue = new EncryptedKeyValue(context, EncryptedKeyValue.PREF_CHAPA_PAYED_ITEM);
     }
 
@@ -223,6 +226,44 @@ public class PayedItems {
      */
     public void removeValue(@NonNull String key) {
         encryptedKeyValue.removeValue(key);
+    }
+
+    /**
+     * restore PurchasedItems to the device
+     *
+     * @param encryptedPurchasedItemJson : encrypted json data of PurchasedItems
+     * @throws JSONException : throws if encryptedPurchasedItemJson is invalid
+     */
+    public void restorePurchase(JSONObject encryptedPurchasedItemJson) throws JSONException {
+        encryptedKeyValue.restoreEncryptedPreference(encryptedPurchasedItemJson);
+    }
+
+    /**
+     * restore PurchasedItems to the device
+     *
+     * @param encryptedPurchasedItemRaw : encrypted json string of PurchasedItems
+     * @throws JSONException : throws if encryptedPurchasedItemRaw is invalid
+     */
+    public void restorePurchase(String encryptedPurchasedItemRaw) throws JSONException {
+        encryptedKeyValue.restoreEncryptedPreference(encryptedPurchasedItemRaw);
+    }
+
+    /**
+     * gets all PurchasedItems data
+     *
+     * @return encrypted Json string of all purchasedItem
+     */
+    public String getAllEncryptedPayedItemAsJSONString() {
+        return encryptedKeyValue.getAllEncryptedDataAsJSONString();
+    }
+
+    /**
+     * gets all PurchasedItems data
+     *
+     * @return encrypted Json Object of all purchasedItem
+     */
+    public JSONObject getAllEncryptedPayedItemAsJSON() {
+        return encryptedKeyValue.getAllEncryptedData();
     }
 
     private double updateNumericValue(@NonNull String key, double value, @NonNull ItemProperties itemProperties) {
