@@ -114,7 +114,7 @@ public class CustomerDialog extends LinearLayout {
     }
 
     private void saveCustomer() {
-        EncryptedKeyValue pref = new EncryptedKeyValue(getContext(), "CHAPA_IN_APP_PAYMENT");
+        EncryptedKeyValue pref = new EncryptedKeyValue(getContext(), EncryptedKeyValue.PREF_CHAPA);
         String customer = firstNameI.getText().toString() + "," + lastNameI.getText().toString() + "," + emailI.getText().toString();
         pref.putValue("customer", customer);
     }

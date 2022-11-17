@@ -5,6 +5,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import org.json.JSONObject;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  * Chapa Request Data
  */
@@ -44,7 +48,8 @@ public class ChapaRequestData extends ChapaConfiguration {
     JSONObject toJsonObject() {
         JSONObject object = new JSONObject();
         try {
-            object.put("amount", getAmount());
+
+            object.put("amount", BigDecimal.valueOf(amount).setScale(2, RoundingMode.CEILING).doubleValue());
             object.put("currency", getCurrency());
             object.put("first_name", getCustomer().getFirstName());
             object.put("last_name", getCustomer().getLastName());

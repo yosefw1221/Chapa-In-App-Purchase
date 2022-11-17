@@ -38,10 +38,11 @@ public class AppPayment extends PaymentType {
         String paymentId;
         String appName = Utils._getAppName(context);
         if (androidID != null) {
-            paymentId = androidID + formattedContent(planName + "-" + appName, 0);
+            paymentId = androidID + formattedContent(planName + "-" + appName, -1);
             setTx_ref("Tx-App-" + paymentId);
         } else {
             androidID = Utils.getPseudoDeviceId();
+            //  generate random transaction reference
             setTx_ref(ChapaUtil.generateTransactionRef(30, "Tx-AppR-" + formattedContent(appName, 10)));
         }
     }

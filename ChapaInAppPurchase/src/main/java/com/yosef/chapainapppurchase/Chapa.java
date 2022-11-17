@@ -72,7 +72,7 @@ public class Chapa {
     public synchronized static Chapa init(@NonNull Context context, @NonNull ChapaConfiguration chapaConfiguration) throws ChapaError {
         ChapaError error = Validator.validateChapaConfiguration(context, chapaConfiguration);
         Logger.initialize(Utils.debugMode(context));
-        Logger.d("Initialize Chapa, ", chapaConfiguration.toString() + "  " + Utils._getAppName(context));
+        Logger.d("Initialize Chapa, ", chapaConfiguration + "  " + Utils._getAppName(context));
         if (error != null) throw error;
         loadAppPaymentData(context);
         _chapaInstance = new Chapa(chapaConfiguration);
@@ -189,7 +189,7 @@ public class Chapa {
     }
 
     private void loadSavedCustomer(Context context, PaymentType paymentType) {
-        EncryptedKeyValue pref = new EncryptedKeyValue(context, "CHAPA_IN_APP_PAYMENT");
+        EncryptedKeyValue pref = new EncryptedKeyValue(context, EncryptedKeyValue.PREF_CHAPA);
         String customerStr = pref.getValue("customer", null);
         if (customerStr != null) {
             String[] data = customerStr.split(",");
