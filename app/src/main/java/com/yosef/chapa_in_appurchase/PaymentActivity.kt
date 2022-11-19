@@ -5,11 +5,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.yosef.chapa_in_appurchase.databinding.ActivityPaymentBinding
 import com.yosef.chapainapppurchase.Chapa
-import com.yosef.chapainapppurchase.ChapaConfiguration
 import com.yosef.chapainapppurchase.ChapaError
-import com.yosef.chapainapppurchase.enums.Currency
 import com.yosef.chapainapppurchase.interfaces.ChapaPaymentCallback
-import com.yosef.chapainapppurchase.model.Customization
 import com.yosef.chapainapppurchase.payment_type.AppPayment
 
 class PaymentActivity : AppCompatActivity() {
@@ -22,19 +19,6 @@ class PaymentActivity : AppCompatActivity() {
         setContentView(binding.root)
         val standardBtn = binding.buyStandard
 
-        // initialize chapa configuration
-        val config = ChapaConfiguration()
-        config.key = "CHASECK_TEST-mReneP71F59KhVmX17OUyItEQWMZzRYC"
-        // for security purpose it is better to use decrypted key
-        // to get decrypt key use Cipher class,
-        // Log.d("Chapa-key",Cipher.decrypt(this,"YOUR CHAPA KEY"))
-        // config.key = Cipher.decrypt(this, "DECRYPTED_CHAPA-KEY")
-        config.currency = Currency.ETB
-        config.showPaymentError(true)
-        config.callbackUrl = "https://example.com/api/callback"
-//        config.customer = Customer("first_name","last_name","example@mail.com")
-        config.customization = Customization("title", "description", "logo-url")
-        Chapa.init(applicationContext, config)
         chapa = Chapa.getInstance()
         // setup App Payment - [Premium feature]
         val standardPlan = AppPayment(this, 9.99, "Standard", MainActivity::class.java)
