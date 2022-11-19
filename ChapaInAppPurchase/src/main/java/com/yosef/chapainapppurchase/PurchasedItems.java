@@ -266,6 +266,19 @@ public class PurchasedItems {
         return encryptedKeyValue.getAllEncryptedData();
     }
 
+    /**
+     * Checks if the item is already purchased by comparing given value and item value
+     *
+     * @param key   : item key
+     * @param value : expected item value if the item is purchased
+     * @return : true if the item value is equal to [@param value], otherwise false
+     */
+    public boolean isPurchased(@NonNull String key, Object value) {
+        String val = encryptedKeyValue.getValue(key, null);
+        String c = String.valueOf(value);
+        return val != null && val.equals(c);
+    }
+
     private double updateNumericValue(@NonNull String key, double value, @NonNull ItemProperties itemProperties) {
         double prevValue = encryptedKeyValue.getValue(key, 0.0);
         double newValue = value;
