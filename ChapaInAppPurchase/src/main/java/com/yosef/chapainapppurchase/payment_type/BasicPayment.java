@@ -8,7 +8,7 @@ import com.yosef.chapainapppurchase.PaymentType;
  */
 public class BasicPayment extends PaymentType {
 
-    public BasicPayment(float amount) {
+    public BasicPayment(double amount) {
         super(amount);
     }
 

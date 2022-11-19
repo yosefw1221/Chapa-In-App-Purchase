@@ -29,7 +29,7 @@ public class AppPayment extends PaymentType {
     private final String planName;
     private String androidID;
 
-    private AppPayment(Context context, float amount, Class<? extends Activity> appMainActivity, @NonNull String planName) {
+    private AppPayment(Context context, double amount, Class<? extends Activity> appMainActivity, @NonNull String planName) {
         super(amount);
         this.context = context;
         this.appMainActivity = appMainActivity;
@@ -53,7 +53,7 @@ public class AppPayment extends PaymentType {
      * @param amount   : amount user to be paid
      * @param planName : app payment plan,  e.g. Basic, Premium...
      */
-    public AppPayment(Context context, float amount, String planName) {
+    public AppPayment(Context context, double amount, String planName) {
         this(context, amount, null, planName);
     }
 
@@ -64,7 +64,7 @@ public class AppPayment extends PaymentType {
      * @param appMainActivity : App's Main activity class that launches after a successful payment
      * @param planName        : app payment plan,  e.g. Basic, Premium...
      */
-    public AppPayment(Context context, float amount, String planName, @NonNull Class<? extends Activity> appMainActivity) {
+    public AppPayment(Context context, double amount, String planName, @NonNull Class<? extends Activity> appMainActivity) {
         this(context, amount, appMainActivity, planName);
     }
 

@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
  */
 public abstract class PaymentType extends ChapaRequestData implements Cloneable {
 
-    public PaymentType(float amount) {
+    public PaymentType(double amount) {
         super(Chapa.getConfiguration());
         setAmount(amount);
     }

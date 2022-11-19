@@ -14,7 +14,7 @@ import java.math.RoundingMode;
  */
 public class ChapaRequestData extends ChapaConfiguration {
     private String tx_ref;
-    private float amount;
+    private double amount;
 
     public ChapaRequestData(ChapaConfiguration c) {
         if (c != null) {
@@ -37,11 +37,11 @@ public class ChapaRequestData extends ChapaConfiguration {
         this.tx_ref = tx_ref;
     }
 
-    public float getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(float amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
