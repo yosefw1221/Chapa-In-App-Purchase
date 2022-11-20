@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">ChapaInAppPurchase</string>
+    <string name="buy_premium">Buy App</string>
+    <string name="chapa_logo">chapa logo</string>
+    <string name="description">Unofficial Chapa In-App Purchase\n Android Library Sample App</string>
+    <string name="standard_version">Standard Version</string>
+    <string name="feature_a">Feature A</string>
+    <string name="feature_c">Feature C</string>
+    <string name="standard_price">Buy App for 9.99 Birr 💰</string>
+    <string name="premium_version">Premium Version 👑</string>
+    <string name="feature_b">Feature B</string>
+    <string name="feature_d">Feature D</string>
+    <string name="premium_price">1.99 $</string>
+    <string name="buy_premium_app">Buy Premium Version</string>
+    <string name="store">Store</string>
+    <string name="app_payment_desc">It is a payment type that allow you to charge your customers to use your app.</string>
+    <string name="test_mode">TEST MODE</string>
+    <string name="chapa_ads">Start accelerating your business with Chapa</string>
+    <string name="close">x</string>
+    <string name="upgrade_to_premium">Upgrade to Premium 💎</string>
+    <string name="emoji">🙂</string>
+    <string name="app_payment_description"># AppPayment - [Premium feature only] \n--------------------------------------------------------------------------------\nIt allow you to charge your user to access your application content\nOnce the user paied, it launches your app\'s Main activity automatically\nIt is preferable if your app has not freemium feature\n--------------------------------------------------------------------------------</string>
+    <string name="app_description_and_features">#App description and features</string>
+    <string name="features">Feature X\nFeature Y</string>
 </resources>

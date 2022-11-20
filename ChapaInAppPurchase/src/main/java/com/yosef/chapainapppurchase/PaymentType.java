@@ -2,9 +2,12 @@ package com.yosef.chapainapppurchase;
 
 import androidx.annotation.NonNull;
 
+/**
+ * This is super class for all payment types
+ */
 public abstract class PaymentType extends ChapaRequestData implements Cloneable {
 
-    public PaymentType(float amount) {
+    public PaymentType(double amount) {
         super(Chapa.getConfiguration());
         setAmount(amount);
     }
@@ -14,12 +17,18 @@ public abstract class PaymentType extends ChapaRequestData implements Cloneable 
     }
 
     /**
-     * this method is executed automatically when payment is successes
+     * this method is executed automatically when payment is successful
      */
     public abstract void onPaymentSuccess();
 
+    /**
+     * this method is executed automatically when payment is failed
+     */
     public abstract void onPaymentFail(ChapaError error);
 
+    /**
+     * this method is executed automatically when payment is canceled
+     */
     public abstract void onPaymentCancel();
 
     @NonNull

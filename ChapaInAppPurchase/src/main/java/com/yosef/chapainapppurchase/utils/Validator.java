@@ -10,7 +10,9 @@ import com.yosef.chapainapppurchase.ChapaRequestData;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+/**
+ * Validate chapa configuration and request data
+ */
 public class Validator {
 
     public static ChapaError validateChapaConfiguration(Context context, ChapaConfiguration config) {
@@ -47,7 +49,7 @@ public class Validator {
 
     public static boolean isValidTxRef(String tx_ref) {
         if (tx_ref == null) return false;
-        Pattern tx_ref_pattern = Pattern.compile("^[a-zA-Z0-9_-]{6,100}$");
+        Pattern tx_ref_pattern = Pattern.compile("^[a-zA-Z0-9_-]{6,200}$");
         Matcher matcher = tx_ref_pattern.matcher(tx_ref);
         return matcher.matches();
     }

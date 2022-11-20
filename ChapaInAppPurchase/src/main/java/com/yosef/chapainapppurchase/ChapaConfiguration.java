@@ -13,7 +13,7 @@ public class ChapaConfiguration {
     private Currency currency = Currency.ETB;
     private String callback_url;
     private Customization customization;
-    private boolean showPaymentError;
+    private boolean showPaymentError = true;
     private String appUniqueName;
 
     public String getKey() {
@@ -36,7 +36,7 @@ public class ChapaConfiguration {
     /**
      * The currency in which all the charges are made. Currency allowed is ETB and USD.
      *
-     * @param currency "ETB" | "USD" default "ETB"
+     * @see Currency
      */
     public void setCurrency(@NonNull Currency currency) {
         this.currency = currency;
@@ -62,18 +62,28 @@ public class ChapaConfiguration {
     }
 
     /**
+     * The customizations field (optional) allows you
      * Customize the look and feel of the payment modal. You can set a logo,
      * the store name to be displayed (title),and a description for the payment.
+     *
+     * @param title       title of the payment modal
+     * @param description description of the payment modal
+     * @param logo        url of the logo to be displayed on the payment modal
      */
-
     public void setCustomization(String title, String description, String logo) {
         this.customization = new Customization(title, description, logo);
     }
+
 
     public Customization getCustomization() {
         return customization;
     }
 
+    /**
+     * Customize the look and feel of the payment model
+     *
+     * @param customization Customization object {@link Customization}
+     */
     public void setCustomization(Customization customization) {
         this.customization = customization;
     }
@@ -82,14 +92,33 @@ public class ChapaConfiguration {
         return _customer;
     }
 
+    /**
+     * Sets the customer information
+     *
+     * @param customer Customer object {@link Customer}
+     */
     public void setCustomer(@NonNull Customer customer) {
         _customer = customer;
     }
 
+    /**
+     * Sets the customer information
+     *
+     * @param firstName first name of the customer
+     * @param lastName  last name of the customer
+     * @param email     email of the customer
+     */
     public void setCustomer(@NonNull String firstName, @NonNull String lastName, @NonNull String email) {
         _customer = new Customer(firstName, lastName, email);
     }
 
+    /**
+     * Controls the default behaviors of Payment Modal when an error occurs.
+     * If set to true, the payment modal will be closed when an error occurs.
+     * If set to false, the payment modal will show error message when an error occurs.
+     *
+     * @param showPaymentError default true
+     */
     public void showPaymentError(boolean showPaymentError) {
         this.showPaymentError = showPaymentError;
     }
@@ -98,21 +127,11 @@ public class ChapaConfiguration {
         return showPaymentError;
     }
 
-    public String getAppUniqueName() {
-        return appUniqueName;
-    }
-
-    public void setAppUniqueName(String appUniqueName) {
-        this.appUniqueName = appUniqueName;
-    }
-
     @NonNull
     @Override
     public String toString() {
         return "ChapaConfiguration{" + "key='" + key + '\'' + ", currency='" + currency + '\'' + ", callback_url='" + callback_url + '\'' + ", customer='" + _customer + '\'' + ", customization=" + customization + '}';
     }
-
-
 
 
 }

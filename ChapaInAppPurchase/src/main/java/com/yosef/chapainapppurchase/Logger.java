@@ -2,6 +2,9 @@ package com.yosef.chapainapppurchase;
 
 import android.util.Log;
 
+/**
+ * Custom logger for ChapaInAppPurchase
+ */
 class Logger {
     static boolean debugMode;
 

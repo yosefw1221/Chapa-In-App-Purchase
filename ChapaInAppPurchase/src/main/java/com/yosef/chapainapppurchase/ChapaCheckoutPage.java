@@ -1,13 +1,13 @@
 package com.yosef.chapainapppurchase;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.LightingColorFilter;
 import android.graphics.PorterDuff;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.View;
@@ -37,6 +37,9 @@ import com.yosef.chapainapppurchase.utils.Validator;
 
 import java.util.Objects;
 
+/**
+ * Payment modal responsible to handle Chapa checkout page
+ */
 public class ChapaCheckoutPage {
     private static boolean isInstanceRunning = false;
     final ProgressBar webProgressView;
@@ -45,11 +48,12 @@ public class ChapaCheckoutPage {
     private final BottomSheetDialog _this;
     private final Context context;
     private final String TAG = "ChapaPaymentDialog --> ";
+    private final EncryptedKeyValue pref;
     private PaymentType paymentType;
     private _PaymentCallback callback;
     private PaymentPageStatus paymentPageStatus;
     private ChapaError _hasChapaError;
-    private EncryptedKeyValue pref;
+
     @SuppressLint("SetJavaScriptEnabled")
 
     public ChapaCheckoutPage(@NonNull Context context) {
@@ -82,6 +86,12 @@ public class ChapaCheckoutPage {
         });
     }
 
+    /**
+     * Process the payment from checkout url
+     *
+     * @param chapaCheckoutUrl Chapa checkout url
+     * @param callback         Payment callback
+     */
     public synchronized void processPayment(@NonNull String chapaCheckoutUrl, @NonNull ChapaCheckoutUrlCallback callback) {
         if (!_this.isShowing()) {
             showPaymentDialog();
@@ -138,6 +148,7 @@ public class ChapaCheckoutPage {
 
             @Override
             public void onFail(ChapaError error) {
+                // checks and verify if user is already paid the current app plan
                 if ((paymentType instanceof AppPayment) && Objects.requireNonNull(error.getMessage()).contains("Transaction reference has been used before") && paymentType.getTx_ref().contains(Objects.requireNonNull(Utils.getAndroidId(context)))) {
                     verifyAppPayment(paymentType);
                 } else {
@@ -156,22 +167,23 @@ public class ChapaCheckoutPage {
 
     private void handleView(PaymentPageStatus status) {
         paymentPageStatus = status;
-        switch (status) {
-            case LOADING_CHECKOUT_PAGE:
-                _this.setContentView(loadingView);
-                break;
-            case PAYMENT_SUCCESSFUL:
-                new Handler().postDelayed(_this::dismiss, 2000);
-                break;
-            case CHECKOUT_PAGE_LOADED:
-                _this.setContentView(webView);
-                break;
-            case PAYMENT_FAILED:
-                _this.setContentView(ErrorPage("Failed to Process Payment", _hasChapaError.getMessage()));
-                new Handler().postDelayed(_this::dismiss, 3000);
-                break;
-
-        }
+        ((Activity) context).runOnUiThread(() -> {
+            switch (status) {
+                case LOADING_CHECKOUT_PAGE:
+                    _this.setContentView(loadingView);
+                    break;
+                case PAYMENT_SUCCESSFUL:
+                    new Handler().postDelayed(_this::dismiss, 2000);
+                    break;
+                case CHECKOUT_PAGE_LOADED:
+                    _this.setContentView(webView);
+                    break;
+                case PAYMENT_FAILED:
+                    _this.setContentView(ErrorPage("Failed to Process Payment", _hasChapaError.getMessage()));
+                    new Handler().postDelayed(_this::dismiss, 3000);
+                    break;
+            }
+        });
     }
 
     private View ErrorPage(String title, String detail) {
@@ -213,12 +225,16 @@ public class ChapaCheckoutPage {
             @Override
             public void onResult(boolean verified, @Nullable Transaction transaction) {
                 if (verified) {
+                    Logger.d(TAG, "AppPayment verified, Restoring App Purchase...");
                     pref.removeValue(paymentType.getTx_ref());
                     paymentPageStatus = PaymentPageStatus.PAYMENT_SUCCESSFUL;
                     _this.dismiss();
                     appPayment.onPaymentSuccess();
-                    if (callback != null) callback.onSuccess(appPayment);
+                    Chapa.setCurrentUserAppPlan(((AppPayment) appPayment).getPlanName());
+                    if (callback != null)
+                        ((Activity) context).runOnUiThread(() -> callback.onSuccess(paymentType));
                 } else {
+                    Logger.d(TAG, "Generating new tx-ref for app payment");
                     paymentType.setTx_ref(ChapaUtil.generateTransactionRef(20, "TX-AppR-"));
                     loadCheckoutPage();
                 }
@@ -226,6 +242,7 @@ public class ChapaCheckoutPage {
 
             @Override
             public void onError(ChapaError error) {
+                Logger.e(TAG, "Error when verifying app-payment ", error);
                 appPayment.onPaymentFail(error);
                 hasError(error);
             }
@@ -239,13 +256,13 @@ public class ChapaCheckoutPage {
     class ChapaWebInterface {
         @JavascriptInterface
         public void cancelPayment() {
-            Log.d(TAG, "cancelPayment: ");
+            Logger.d(TAG, "JavascriptInterface : cancelPayment ");
             _this.dismiss();
         }
 
         @JavascriptInterface
         public void processingPayment() {
-            Log.d(TAG, "processingPayment: ");
+            Logger.d(TAG, "JavascriptInterface : processingPayment ");
             paymentPageStatus = PaymentPageStatus.PROCESSING_PAYMENT;
             _this.setCancelable(false);
             webView.setClickable(false);
@@ -258,10 +275,15 @@ public class ChapaCheckoutPage {
             super.onPageFinished(view, url);
             webProgressView.setVisibility(View.GONE);
             if (url.contains("receipt")) {
+                Logger.d(TAG, "Payment Success!");
                 handleView(PaymentPageStatus.PAYMENT_SUCCESSFUL);
                 paymentType.onPaymentSuccess();
                 pref.removeValue(paymentType.getTx_ref());
-                if (callback != null) callback.onSuccess(paymentType);
+                if (paymentType instanceof AppPayment)
+                    Chapa.setCurrentUserAppPlan(((AppPayment) paymentType).getPlanName());
+                if (callback != null)
+                    ((Activity) context).runOnUiThread(() -> callback.onSuccess(paymentType));
+
             } else if (paymentPageStatus != PaymentPageStatus.CHECKOUT_PAGE_LOADED)
                 handleView(PaymentPageStatus.CHECKOUT_PAGE_LOADED);
             _this.setCancelable(true);
@@ -278,7 +300,7 @@ public class ChapaCheckoutPage {
 
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-            hasError(new ChapaError(500, description));
+            hasError(new ChapaError(ChapaError.CONNECTIVITY_PROBLEM, description));
         }
     }
 }

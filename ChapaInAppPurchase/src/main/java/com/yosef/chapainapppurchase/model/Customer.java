@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Customer information
+ */
 public class Customer {
     private final String first_name;
     private final String last_name;

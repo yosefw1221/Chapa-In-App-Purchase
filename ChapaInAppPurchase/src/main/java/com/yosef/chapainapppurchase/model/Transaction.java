@@ -11,6 +11,9 @@ import java.util.Currency;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Represents a response of verified chapa transaction
+ */
 public class Transaction {
     private Customer customer;
     private String currency;
