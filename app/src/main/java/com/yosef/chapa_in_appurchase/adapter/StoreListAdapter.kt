@@ -10,7 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.yosef.chapa_in_appurchase.R
-import com.yosef.chapa_in_appurchase.adapter.data.StoreItem
+import com.yosef.chapa_in_appurchase.data.StoreItem
 import com.yosef.chapainapppurchase.Chapa
 import com.yosef.chapainapppurchase.ChapaError
 import com.yosef.chapainapppurchase.PurchasedItems

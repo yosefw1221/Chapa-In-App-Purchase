@@ -12,7 +12,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.yosef.chapa_in_appurchase.adapter.StoreListAdapter
-import com.yosef.chapa_in_appurchase.adapter.data.StoreItem
+import com.yosef.chapa_in_appurchase.data.StoreItem
 import com.yosef.chapa_in_appurchase.databinding.ActivityMainBinding
 import com.yosef.chapainapppurchase.Chapa
 import com.yosef.chapainapppurchase.ChapaUtil
@@ -65,19 +65,6 @@ class MainActivity : AppCompatActivity() {
         upgradeBtn.setOnClickListener {
             upgradeToPremium()
         }
-        emoji.textSize = 11f
-        emoji.setTextIsSelectable(true)
-        emoji.text = "${Cipher.encrypt(this, "Premium")} | ${
-            Cipher.encrypt(
-                "Premium",
-                "hello"
-            )
-        }\n${
-            Cipher.decrypt(
-                this,
-                "1765D2403E3E9533316D9783D1486D58"
-            )
-        } | ${Cipher.decrypt("7DAB094EFCBA82B46898D43B1260B114", "hello")}"
 
         disableAds.setOnClickListener {
             AlertDialog.Builder(this).setTitle("Upgrade to Premium")
@@ -95,10 +82,24 @@ class MainActivity : AppCompatActivity() {
                 ::displayPayedItemValue
             )
         )
+        // to secure your item payment use encrypt  'amount' 'itemValue' and 'itemKey'
+        Log.i(
+            "Encrypted, Key : ",
+            Cipher.encrypt(this, "coin") + "\nValue : " + Cipher.encrypt(
+                this,
+                "25"
+            ) + "\nAmount : " + Cipher.encrypt(this, "2.99")
+        )
         store.add(
             StoreItem(
                 "🪙",
-                ItemPayment(this, 2.99, "coin", 25, ItemProperties.ADD),
+                ItemPayment(
+                    this,
+                    Cipher.decrypt(this, "C5F373E141957172C4F130A65BFE70B9").toDouble(), // amount
+                    Cipher.decrypt(this, "DAABD31A834EEC8E3EE29C819AFD6091"), // itemKey
+                    Cipher.decrypt(this, "E6D33CB6CBFB48212745A53469AC5CC0").toInt(), // itemValue
+                    ItemProperties.ADD
+                ),
                 ::displayPayedItemValue
             )
         )
