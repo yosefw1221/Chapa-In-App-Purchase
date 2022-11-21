@@ -3,7 +3,7 @@ Unoffical Android In-App Purchase Library using Chapa
 
 [View Documentation](https://yosefw1221.github.io/chapa-in-app-purchase-doc/)
 
-[Download Sample App](https://drive.google.com/file/d/10uex5K9aNCghJCLauvvqqr-UKdcVchmp/view?usp=share_link)
+[Download Sample App](https://bit.ly/example-apk)
 
 # Getting Started
 
