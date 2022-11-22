@@ -40,9 +40,9 @@ dependencies {
 ```kotlin
 val config = ChapaConfiguration()
 config.key = "YOUR-CHAPA-SECRET-KEY" // (Required)
-// for security purpose it is better to use decrypted key
-// to get decrypt key use Cipher class,
-// Log.d("Chapa-key",Cipher.decrypt(this,"YOUR CHAPA-SECRET-KEY"))
+// for security purpose it is better to use encrypt key
+// to get encrypted key use Cipher class,
+// Log.d("Chapa-key",Cipher.encrypt(this,"YOUR CHAPA-SECRET-KEY"))
 // config.key = Cipher.decrypt(this, "DECRYPTED_CHAPA-SECRET-KEY")
 config.currency = Currency.ETB // Currency.USD --Default ETB
 
