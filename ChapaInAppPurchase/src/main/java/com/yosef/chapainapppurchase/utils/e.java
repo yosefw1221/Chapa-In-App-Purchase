@@ -10,7 +10,7 @@ public class e {
     public static String a(final String s, String key) {
         try {
             final Cipher instance;
-            (instance = Cipher.getInstance("AES")).init(1, new SecretKeySpec(SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1").generateSecret(new PBEKeySpec(key.toCharArray(), key.getBytes(), 128, 256)).getEncoded(), "AES"));
+            (instance = Cipher.getInstance("AES/GCM/NoPadding")).init(1, new SecretKeySpec(SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1").generateSecret(new PBEKeySpec(key.toCharArray(), key.getBytes(), 128, 256)).getEncoded(), "AES/GCM/NoPadding"));
             return a(instance.doFinal(s.getBytes()));
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -21,7 +21,7 @@ public class e {
     public static String a(final String s) {
         try {
             final Cipher instance;
-            (instance = Cipher.getInstance("AES")).init(1, new SecretKeySpec(SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1").generateSecret(new PBEKeySpec(s.toCharArray(), s.getBytes(), 128, 256)).getEncoded(), "AES"));
+            (instance = Cipher.getInstance("AES/GCM/NoPadding")).init(1, new SecretKeySpec(SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1").generateSecret(new PBEKeySpec(s.toCharArray(), s.getBytes(), 128, 256)).getEncoded(), "AES/GCM/NoPadding"));
             return a(instance.doFinal(s.getBytes()));
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -32,7 +32,7 @@ public class e {
     public static String b(final String s, String key) {
         try {
             final Cipher instance;
-            (instance = Cipher.getInstance("AES")).init(2, new SecretKeySpec(SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1").generateSecret(new PBEKeySpec(key.toCharArray(), key.getBytes(), 128, 256)).getEncoded(), "AES"));
+            (instance = Cipher.getInstance("AES/GCM/NoPadding")).init(2, new SecretKeySpec(SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1").generateSecret(new PBEKeySpec(key.toCharArray(), key.getBytes(), 128, 256)).getEncoded(), "AES/GCM/NoPadding"));
             return new String(instance.doFinal(c(s)));
         } catch (Exception ex) {
             ex.printStackTrace();
