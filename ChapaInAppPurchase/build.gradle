@@ -41,7 +41,7 @@ publishing {
         release(MavenPublication) {
             groupId = 'com.github.yosefw1221'
             artifactId = 'Chapa-In-App-Purchase'
-            version = '1.0.0-beta'
+            version = '1.0.1-beta'
             pom {
                 description = 'Unofficial chapa android in-app purchase library'
             }
