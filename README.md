@@ -28,7 +28,7 @@ repositories {
 
 ```gradle
 dependencies {
-    implementation 'com.github.yosefw1221:Chapa-In-App-Purchase:1.0.0-beta'
+    implementation 'com.github.yosefw1221:Chapa-In-App-Purchase:1.0.1'
     ...
 }
 ```
